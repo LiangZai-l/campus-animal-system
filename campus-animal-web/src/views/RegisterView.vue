@@ -8,16 +8,24 @@
       </div>
       <el-form ref="formRef" :model="form" :rules="rules" size="large" @submit.prevent="handleRegister">
         <el-form-item prop="username">
-          <el-input v-model="form.username" placeholder="用户名（3-50位）" prefix-icon="User" />
+          <el-input v-model="form.username" placeholder="用户名（3-50位）">
+            <template #prefix><el-icon><User /></el-icon></template>
+          </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password" type="password" placeholder="密码（6位以上）" prefix-icon="Lock" show-password />
+          <el-input v-model="form.password" type="password" placeholder="密码（6位以上）" show-password>
+            <template #prefix><el-icon><Lock /></el-icon></template>
+          </el-input>
         </el-form-item>
         <el-form-item prop="realName">
-          <el-input v-model="form.realName" placeholder="真实姓名（选填）" prefix-icon="UserFilled" />
+          <el-input v-model="form.realName" placeholder="真实姓名（选填）">
+            <template #prefix><el-icon><UserFilled /></el-icon></template>
+          </el-input>
         </el-form-item>
         <el-form-item prop="phone">
-          <el-input v-model="form.phone" placeholder="手机号（选填）" prefix-icon="Phone" />
+          <el-input v-model="form.phone" placeholder="手机号（选填）">
+            <template #prefix><el-icon><Phone /></el-icon></template>
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" native-type="submit" :loading="loading" class="submit-btn">

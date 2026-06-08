@@ -131,6 +131,13 @@ npm run build                # 生产构建
 - 动物卡片封面图使用 `<img>` 懒加载，无封面时显示 emoji 占位符（🐱🐕🐦🐾）
 - Logo SVG 位于 `src/assets/logo.svg`，爪印+绿叶组合，绿色渐变圆形背景
 
+### 前端常见问题
+
+- **Element Plus 组件无样式：** `main.js` 必须导入 `import 'element-plus/dist/index.css'`，否则所有组件都是裸 HTML
+- **图标不显示：** `el-input` 的 `prefix-icon` 必须用 slot 语法（`<template #prefix><el-icon><User /></el-icon></template>`），不能用 `prefix-icon="User"` 字符串
+- **未登录闪现页面：** 路由守卫检查 `meta.auth` — 带 `auth: true` 标记的路由在未登录时直接重定向到 `/login`
+- **Element Plus 中文：** `app.use(ElementPlus, { locale: zhCn })` 已配置，日历/分页等组件使用中文
+
 ## Git 与网络
 
 远程仓库：`https://github.com/LiangZai-l/campus-animal-system.git`

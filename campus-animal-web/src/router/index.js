@@ -17,17 +17,20 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/HomeView.vue')
+    component: () => import('../views/HomeView.vue'),
+    meta: { auth: true }
   },
   {
     path: '/animals/:id',
     name: 'AnimalDetail',
-    component: () => import('../views/AnimalDetailView.vue')
+    component: () => import('../views/AnimalDetailView.vue'),
+    meta: { auth: true }
   },
   {
     path: '/checkin/create',
     name: 'CheckInCreate',
-    component: () => import('../views/CheckInCreateView.vue')
+    component: () => import('../views/CheckInCreateView.vue'),
+    meta: { auth: true }
   },
   {
     path: '/admin',
@@ -57,6 +60,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
 
+  if (to.meta.auth && !auth.token) {
+    return next('/login')
+  }
   if (to.meta.admin && auth.user?.role !== 'ADMIN') {
     return next('/')
   }
