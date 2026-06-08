@@ -31,8 +31,36 @@ campus-animal-server/                    # 后端 Spring Boot
 │   └── src/
 │       ├── main/java/com/campus/animal/
 │       │   ├── CampusAnimalApplication.java     # 启动类
-│       │   ├── entity/                          # 实体层：User, Animal, CheckIn
-│       │   └── mapper/                          # 数据访问层：User/Animal/CheckInMapper
+│       │   ├── common/                          # 公共模块
+│       │   │   ├── Result.java                  # 统一响应体
+│       │   │   ├── ResultCode.java              # 状态码常量
+│       │   │   ├── BusinessException.java       # 业务异常
+│       │   │   └── GlobalExceptionHandler.java  # 全局异常处理
+│       │   ├── config/                          # 配置层
+│       │   │   ├── SecurityConfig.java          # Spring Security + JWT
+│       │   │   ├── MybatisPlusConfig.java       # 分页插件
+│       │   │   ├── WebMvcConfig.java            # 静态资源映射
+│       │   │   └── DataInitializer.java         # 管理员初始化
+│       │   ├── controller/                      # 控制器层
+│       │   │   ├── AuthController.java          # 注册/登录
+│       │   │   ├── AnimalController.java        # 动物 CRUD
+│       │   │   └── FileController.java          # 文件上传
+│       │   ├── service/                         # 业务逻辑层
+│       │   │   ├── AuthService.java / AnimalService.java / FileService.java
+│       │   │   └── impl/                        # 实现类
+│       │   ├── mapper/                          # 数据访问层
+│       │   │   └── User/Animal/CheckInMapper.java
+│       │   ├── entity/                          # 实体层
+│       │   │   └── User/Animal/CheckIn.java
+│       │   ├── dto/                             # 入参 DTO
+│       │   │   └── LoginDTO / RegisterDTO / AnimalSaveDTO / AnimalQueryDTO
+│       │   ├── vo/                              # 出参 VO
+│       │   │   └── LoginVO / UserVO / AnimalVO / AnimalDetailVO / CheckInVO
+│       │   └── security/                        # 安全模块
+│       │       ├── JwtTokenProvider.java        # JWT 生成与解析
+│       │       ├── JwtAuthenticationFilter.java # JWT 认证过滤器
+│       │       ├── TokenUser.java               # 令牌用户主体
+│       │       └── SecurityUtils.java           # 获取当前用户工具
 │       ├── main/resources/
 │       │   └── application.yml                  # 核心配置
 │       └── test/java/com/campus/animal/
@@ -74,16 +102,42 @@ npm run dev                  # 启动前端（端口 5173）
 
 | 阶段 | 状态 | 说明 |
 |------|------|------|
-| 0. 环境就绪 | ✅ | 数据库 `campus_animal` 已创建，三张表已建，管理员数据已插入 |
+| 0. 环境就绪 | ✅ | 数据库 `campus_animal` 已创建，三张表已建 |
 | 1. 项目骨架 | ✅ | pom.xml + 启动类 + application.yml 就绪，启动无报错 |
 | 2. 实体层与数据访问层 | ✅ | User/Animal/CheckIn 实体 + 对应 Mapper，MapperTest 通过 |
 | 3. 统一响应与全局异常处理 | ✅ | Result<T> + BusinessException + GlobalExceptionHandler + ResultCode |
-| 4. 用户认证模块 | ⬜ | Spring Security + JWT |
-| 5. 动物 CRUD + 文件上传 | ⬜ | |
+| 4. 用户认证模块 | ✅ | Spring Security + JWT（注册/登录/JWT过滤器/权限控制） |
+| 5. 动物 CRUD + 文件上传 | ✅ | 分页模糊查询/类型筛选/文件上传/ADMIN 权限隔离 |
 | 6. 打卡动态模块 | ⬜ | |
 | 7. Vue 前端搭建 | ⬜ | |
 
 ### 重要备忘
 
-- MyBatis-Plus 3.5.9 移除了 `PaginationInnerInterceptor`，分页由 `MybatisPlusInnerInterceptorAutoConfiguration` 自动配置。无需手动创建 `MybatisPlusConfig`。
+- MyBatis-Plus 3.5.9 将 `PaginationInnerInterceptor` 拆分到了独立模块 `mybatis-plus-jsqlparser`（不再是核心模块的一部分）。因此 pom.xml 需同时引入两个依赖，并创建 `MybatisPlusConfig` 手动注册分页插件。
 - application.yml 中已移除逻辑删除配置（表中无 `deleted` 字段），避免 SQL 报错。
+- 管理员账号由 `DataInitializer` 在首次启动时自动创建（admin / admin123），仅当数据库中无 admin 用户时创建，不会覆盖已有密码。
+- `GlobalExceptionHandler` 中的 `AccessDeniedException` 处理用于 `@PreAuthorize` 方法级权限校验（如 ADMIN 操作），`AuthenticationException` 处理由 `SecurityConfig` 中的 `authenticationEntryPoint` 在过滤器层统一处理。
+- 文件上传扩展名从 Content-Type 推导（非用户文件名），防止 XSS 攻击。
+- `AnimalQueryDTO` 的 `page` 和 `size` 字段已加 `@Min(1)` 校验，防止负值导致 SQL 异常。
+
+## Git 与网络
+
+远程仓库：`https://github.com/LiangZai-l/campus-animal-system.git`
+
+```bash
+# 提交并推送
+cd campus-animal-server/..
+git add -A
+git commit -m "..."
+git push origin main
+```
+
+如果 `git push` 无法访问 GitHub（境外服务器），可配置代理后再推送：
+
+```bash
+git config http.proxy http://127.0.0.1:10808
+git push origin main
+git config --unset http.proxy  # 推送完取消代理
+```
+
+> **注意：** 如果遇到网络问题导致 `git push` 失败，请向用户确认后走 10808 端口代理。
