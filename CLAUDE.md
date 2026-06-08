@@ -77,7 +77,7 @@ npm run dev                  # 启动前端（端口 5173）
 | 0. 环境就绪 | ✅ | 数据库 `campus_animal` 已创建，三张表已建，管理员数据已插入 |
 | 1. 项目骨架 | ✅ | pom.xml + 启动类 + application.yml 就绪，启动无报错 |
 | 2. 实体层与数据访问层 | ✅ | User/Animal/CheckIn 实体 + 对应 Mapper，MapperTest 通过 |
-| 3. 统一响应与全局异常处理 | ⏳ 下一步 | Result<T> + BusinessException + GlobalExceptionHandler |
+| 3. 统一响应与全局异常处理 | ✅ | Result<T> + BusinessException + GlobalExceptionHandler + ResultCode |
 | 4. 用户认证模块 | ⬜ | Spring Security + JWT |
 | 5. 动物 CRUD + 文件上传 | ⬜ | |
 | 6. 打卡动态模块 | ⬜ | |

@@ -2,6 +2,12 @@ server:
   port: 8080
 
 spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
   datasource:
     url: jdbc:mysql://localhost:3306/campus_animal?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
