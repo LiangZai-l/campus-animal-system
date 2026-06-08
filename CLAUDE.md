@@ -80,8 +80,9 @@ mvn test -Dtest=MapperTest   # 运行数据访问层测试
 
 # 前端
 cd campus-animal-web
-npm install                  # 安装依赖
-npm run dev                  # 启动前端（端口 5173）
+npm install                  # 安装依赖（首次）
+npm run dev                  # 启动前端（端口 5173，API 代理到 8080）
+npm run build                # 生产构建
 
 # 数据库
 # MySQL 服务已设为自动启动，通过 MySQL Workbench 管理
@@ -108,8 +109,8 @@ npm run dev                  # 启动前端（端口 5173）
 | 3. 统一响应与全局异常处理 | ✅ | Result<T> + BusinessException + GlobalExceptionHandler + ResultCode |
 | 4. 用户认证模块 | ✅ | Spring Security + JWT（注册/登录/JWT过滤器/权限控制） |
 | 5. 动物 CRUD + 文件上传 | ✅ | 分页模糊查询/类型筛选/文件上传/ADMIN 权限隔离 |
-| 6. 打卡动态模块 | ⬜ | |
-| 7. Vue 前端搭建 | ⬜ | |
+| 6. 打卡动态模块 | ✅ | 发布打卡/动物时间轴/我的历史，批量查用户避免 N+1 |
+| 7. Vue 前端搭建 | ✅ | Vue 3 + Element Plus + 路由守卫 + 清新绿色主题 |
 
 ### 重要备忘
 
@@ -119,6 +120,16 @@ npm run dev                  # 启动前端（端口 5173）
 - `GlobalExceptionHandler` 中的 `AccessDeniedException` 处理用于 `@PreAuthorize` 方法级权限校验（如 ADMIN 操作），`AuthenticationException` 处理由 `SecurityConfig` 中的 `authenticationEntryPoint` 在过滤器层统一处理。
 - 文件上传扩展名从 Content-Type 推导（非用户文件名），防止 XSS 攻击。
 - `AnimalQueryDTO` 的 `page` 和 `size` 字段已加 `@Min(1)` 校验，防止负值导致 SQL 异常。
+
+### 前端备忘
+
+- 配色主题：鼠尾草绿 `#5D9C7B` 为主色，琥珀 `#F0A04B` 为辅色，浅薄荷 `#F7FAF8` 为背景
+- Vite 开发服务器配置了 `/api` 代理到 `localhost:8080`，解决跨域问题
+- 路由守卫：未登录自动跳登录页，非 ADMIN 无法访问 `/admin/*` 路由
+- Pinia auth store 将 token 和 user 持久化到 localStorage，登录状态在刷新后保持
+- Axios 拦截器自动添加 Authorization 头，401 时清空登录状态并跳转登录页
+- 动物卡片封面图使用 `<img>` 懒加载，无封面时显示 emoji 占位符（🐱🐕🐦🐾）
+- Logo SVG 位于 `src/assets/logo.svg`，爪印+绿叶组合，绿色渐变圆形背景
 
 ## Git 与网络
 

@@ -8,18 +8,24 @@ import com.campus.animal.common.ResultCode;
 import com.campus.animal.dto.AnimalQueryDTO;
 import com.campus.animal.dto.AnimalSaveDTO;
 import com.campus.animal.entity.Animal;
+import com.campus.animal.entity.CheckIn;
+import com.campus.animal.entity.User;
 import com.campus.animal.mapper.AnimalMapper;
+import com.campus.animal.mapper.CheckInMapper;
+import com.campus.animal.mapper.UserMapper;
 import com.campus.animal.security.SecurityUtils;
 import com.campus.animal.service.AnimalService;
 import com.campus.animal.vo.AnimalDetailVO;
 import com.campus.animal.vo.AnimalVO;
+import com.campus.animal.vo.CheckInVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +33,8 @@ import java.util.stream.Collectors;
 public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalMapper animalMapper;
+    private final CheckInMapper checkInMapper;
+    private final UserMapper userMapper;
 
     @Override
     public AnimalVO create(AnimalSaveDTO dto) {
@@ -104,7 +112,30 @@ public class AnimalServiceImpl implements AnimalService {
 
         AnimalDetailVO detail = new AnimalDetailVO();
         BeanUtils.copyProperties(animal, detail);
-        detail.setTimeline(Collections.emptyList());
+
+        List<CheckIn> checkIns = checkInMapper.selectList(
+                new LambdaQueryWrapper<CheckIn>()
+                        .eq(CheckIn::getAnimalId, id)
+                        .orderByDesc(CheckIn::getCreatedAt));
+
+        if (!checkIns.isEmpty()) {
+            Set<Long> userIds = checkIns.stream()
+                    .map(CheckIn::getUserId)
+                    .collect(Collectors.toSet());
+            Map<Long, String> usernameMap = userMapper.selectBatchIds(userIds).stream()
+                    .collect(Collectors.toMap(User::getId, u -> u.getUsername() != null ? u.getUsername() : "", (a, b) -> a));
+
+            List<CheckInVO> timeline = checkIns.stream().map(ci -> {
+                CheckInVO vo = new CheckInVO();
+                BeanUtils.copyProperties(ci, vo);
+                vo.setUsername(usernameMap.get(ci.getUserId()));
+                return vo;
+            }).collect(Collectors.toList());
+            detail.setTimeline(timeline);
+        } else {
+            detail.setTimeline(List.of());
+        }
+
         return detail;
     }
 

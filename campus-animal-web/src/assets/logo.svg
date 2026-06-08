@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8BC4A2"/>
+      <stop offset="100%" style="stop-color:#5D9C7B"/>
+    </linearGradient>
+  </defs>
+  <!-- 圆形背景 -->
+  <circle cx="60" cy="60" r="56" fill="url(#bg)"/>
+  <!-- 主肉垫 -->
+  <ellipse cx="60" cy="68" rx="18" ry="15" fill="white" opacity="0.95"/>
+  <!-- 三个小肉垫 -->
+  <ellipse cx="44" cy="45" rx="7" ry="7.5" fill="white" opacity="0.95"/>
+  <ellipse cx="60" cy="38" rx="7" ry="7.5" fill="white" opacity="0.95"/>
+  <ellipse cx="76" cy="45" rx="7" ry="7.5" fill="white" opacity="0.95"/>
+  <!-- 小叶子在右上方 -->
+  <g transform="translate(82, 20) rotate(15)">
+    <path d="M0 0 Q6 -10 12 -2 Q8 4 0 0Z" fill="white" opacity="0.7"/>
+    <line x1="0" y1="0" x2="4" y2="5" stroke="white" stroke-width="1.5" opacity="0.5"/>
+  </g>
+</svg>

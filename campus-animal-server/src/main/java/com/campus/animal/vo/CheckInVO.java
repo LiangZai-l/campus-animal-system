@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class CheckInVO {
     private Long id;
+    private Long animalId;
     private Long userId;
     private String username;
     private String content;
