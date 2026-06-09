@@ -130,6 +130,7 @@ npm run build                # 生产构建
 - Axios 拦截器自动添加 Authorization 头，401 时清空登录状态并跳转登录页
 - 动物卡片封面图使用 `<img>` 懒加载，无封面时显示 emoji 占位符（🐱🐕🐦🐾）
 - Logo SVG 位于 `src/assets/logo.svg`，爪印+绿叶组合，绿色渐变圆形背景
+- **图片上传：** `AnimalFormView.vue` 使用 `el-upload` 组件 + 自定义 `http-request` 实现封面图上传。流程：点击上传区域 → 弹出文件选择器 → `beforeUpload` 校验（类型+大小）→ `handleUpload` 构建 FormData → POST `/api/files/upload` → 后端返回 URL → 存入 `form.coverImage` → 显示预览。使用 `:show-file-list="false"` 隐藏默认文件列表，自定义上传区域（虚线边框 + Plus 图标）。上传成功后显示图片预览 + "移除图片"按钮。
 
 ### 前端常见问题
 
@@ -137,6 +138,7 @@ npm run build                # 生产构建
 - **图标不显示：** `el-input` 的 `prefix-icon` 必须用 slot 语法（`<template #prefix><el-icon><User /></el-icon></template>`），不能用 `prefix-icon="User"` 字符串
 - **未登录闪现页面：** 路由守卫检查 `meta.auth` — 带 `auth: true` 标记的路由在未登录时直接重定向到 `/login`
 - **Element Plus 中文：** `app.use(ElementPlus, { locale: zhCn })` 已配置，日历/分页等组件使用中文
+- **el-upload 手动上传：** 使用 `:http-request` 覆盖默认上传行为时，必须手动构建 FormData 并用 Axios 实例发送（才能经过请求拦截器自动添加 Authorization 头）。上传完成后需调用 `onSuccess()` / `onError()` 通知组件状态。
 
 ## Git 与网络
 
