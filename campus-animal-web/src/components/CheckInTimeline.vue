@@ -1,14 +1,34 @@
+<!--
+  打卡时间轴组件 — 展示打卡记录列表。
+
+  Props:
+  - items: Array (默认 []) — 打卡记录数组，每条需包含 id, username, content,
+    createdAt, mood(可选), location(可选)。
+
+  每条记录的展示内容：
+  - 头像（用户名的首字母，圆形绿色背景）
+  - 用户名 + 格式化时间
+  - 打卡正文
+  - 心情标签（开心/一般/担心）+ 地点
+  - 无记录时显示"暂无打卡记录"
+-->
 <template>
   <div class="timeline">
+    <!-- 空状态提示 -->
     <div v-if="!items.length" class="empty-hint">暂无打卡记录</div>
+    <!-- 遍历打卡记录列表 -->
     <div v-for="item in items" :key="item.id" class="timeline-item">
+      <!-- 头像 — 取用户名的第一个字 -->
       <div class="tl-avatar">{{ item.username?.charAt(0) || '?' }}</div>
       <div class="tl-body">
+        <!-- 顶部：用户名 + 时间 -->
         <div class="tl-header">
           <strong>{{ item.username }}</strong>
           <span class="tl-time">{{ formatTime(item.createdAt) }}</span>
         </div>
+        <!-- 打卡内容 -->
         <p class="tl-content">{{ item.content }}</p>
+        <!-- 底部：心情标签 + 地点 -->
         <div class="tl-footer">
           <el-tag v-if="item.mood" size="small" :type="moodColor(item.mood)">
             {{ moodLabel(item.mood) }}
@@ -23,10 +43,16 @@
 </template>
 
 <script setup>
+// 定义 props（接收打卡记录数组）
 defineProps({
   items: { type: Array, default: () => [] }
 })
 
+/**
+ * 格式化 ISO 时间字符串为本地显示格式。
+ * 示例输入："2026-06-08T10:30:00"
+ * 示例输出："2026-06-08 10:30"
+ */
 function formatTime(str) {
   if (!str) return ''
   const d = new Date(str)
@@ -34,10 +60,12 @@ function formatTime(str) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+/** 心情 → Element Plus Tag 颜色映射 */
 function moodColor(m) {
   return { happy: 'success', neutral: '', worried: 'danger' }[m] || ''
 }
 
+/** 心情英文 → 中文显示映射 */
 function moodLabel(m) {
   return { happy: '开心', neutral: '一般', worried: '担心' }[m] || m
 }
@@ -47,6 +75,7 @@ function moodLabel(m) {
 .timeline { padding: 4px 0; }
 .empty-hint { text-align: center; color: var(--text-secondary); padding: 24px; font-size: 14px; }
 
+/* 每条打卡记录 — 左头像 + 右内容 */
 .timeline-item {
   display: flex;
   gap: 12px;
@@ -55,6 +84,7 @@ function moodLabel(m) {
 }
 .timeline-item:last-child { border-bottom: none; }
 
+/* 头像 — 圆形，绿色背景，显示用户名首字 */
 .tl-avatar {
   width: 36px;
   height: 36px;

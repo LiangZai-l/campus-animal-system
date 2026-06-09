@@ -1,3 +1,13 @@
+<!--
+  顶部导航栏组件 — 固定于页面顶部（sticky）。
+
+  功能：
+  - 左侧：Logo + "校园动物图鉴" 文字（点击回首页）
+  - 中间：导航链接（首页、打卡、管理）
+  - 右侧：用户区域
+    - 未登录：显示"登录"和"注册"按钮
+    - 登录后：用户名（hover 下拉菜单 → 个人中心 / 退出）
+-->
 <template>
   <header class="app-header">
     <div class="header-inner">
@@ -16,8 +26,22 @@
 
       <div class="user-area">
         <template v-if="auth.isLoggedIn">
-          <span class="user-name">{{ auth.user?.realName || auth.user?.username }}</span>
-          <el-button text size="small" @click="handleLogout">退出</el-button>
+          <el-dropdown trigger="hover" @command="handleCommand">
+            <span class="user-name-dropdown">
+              {{ auth.user?.realName || auth.user?.username }}
+              <el-icon class="dropdown-icon"><ArrowDown /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="profile">
+                  <el-icon><User /></el-icon> 个人中心
+                </el-dropdown-item>
+                <el-dropdown-item command="logout" divided>
+                  <el-icon><SwitchButton /></el-icon> 退出登录
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
         <template v-else>
           <el-button text size="small" @click="$router.push('/login')">登录</el-button>
@@ -36,9 +60,13 @@ import logoSvg from '../assets/logo.svg'
 const auth = useAuthStore()
 const router = useRouter()
 
-function handleLogout() {
-  auth.logout()
-  router.push('/login')
+function handleCommand(cmd) {
+  if (cmd === 'profile') {
+    router.push('/profile')
+  } else if (cmd === 'logout') {
+    auth.logout()
+    router.push('/login')
+  }
 }
 </script>
 
@@ -69,10 +97,7 @@ function handleLogout() {
   color: var(--text);
   flex-shrink: 0;
 }
-.logo-img {
-  width: 32px;
-  height: 32px;
-}
+.logo-img { width: 32px; height: 32px; }
 .logo-text {
   font-size: 17px;
   font-weight: 700;
@@ -80,11 +105,7 @@ function handleLogout() {
   white-space: nowrap;
 }
 
-.nav-links {
-  display: flex;
-  gap: 8px;
-  flex: 1;
-}
+.nav-links { display: flex; gap: 8px; flex: 1; }
 .nav-item {
   padding: 6px 14px;
   border-radius: 6px;
@@ -97,9 +118,7 @@ function handleLogout() {
   color: var(--primary);
   background: var(--primary-bg);
 }
-.nav-admin {
-  color: var(--amber) !important;
-}
+.nav-admin { color: var(--amber) !important; }
 
 .user-area {
   display: flex;
@@ -107,10 +126,24 @@ function handleLogout() {
   gap: 8px;
   flex-shrink: 0;
 }
-.user-name {
+
+.user-name-dropdown {
   font-size: 14px;
   color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
 }
+.user-name-dropdown:hover {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+.dropdown-icon { font-size: 12px; transition: transform 0.2s; }
+.user-name-dropdown:hover .dropdown-icon { transform: rotate(180deg); }
 
 @media (max-width: 640px) {
   .logo-text { display: none; }

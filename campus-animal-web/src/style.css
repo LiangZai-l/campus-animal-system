@@ -1,24 +1,46 @@
-/* Campus Animal — 清新自然主题 */
+/*
+ * 校园动物图鉴 — 全局样式 & 设计系统。
+ *
+ * 配色方案：鼠尾草绿（#5D9C7B）为主色，琥珀（#F0A04B）为辅色，
+ * 浅薄荷（#F7FAF8）为页面背景，打造清新自然的校园风格。
+ */
+
+/* ===== CSS 自定义属性 ===== */
 :root {
   --primary: #5D9C7B;
   --primary-light: #8BC4A2;
   --primary-bg: #EAF5EF;
+  --primary-dark: #4A7D62;
+
   --amber: #F0A04B;
   --amber-light: #F7D08A;
+
   --sky: #7CB9E8;
   --sky-light: #B8D9F5;
+
   --bg: #F7FAF8;
   --card: #FFFFFF;
   --text: #2C3E3A;
   --text-secondary: #6B7F7A;
   --border: #E0EBE5;
+
   --radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(44, 62, 58, 0.06);
+  --shadow: 0 2px 12px rgba(44, 62, 58, 0.06);
+  --shadow-lg: 0 4px 24px rgba(44, 62, 58, 0.10);
+
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ===== 全局重置 ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -26,14 +48,40 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
   color: var(--primary);
   text-decoration: none;
+  transition: color var(--transition);
 }
 
-/* Element Plus 主题覆盖 */
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(93, 156, 123, 0.25);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(93, 156, 123, 0.4);
+}
+
+/* ===== Element Plus 主题覆盖 ===== */
 :root {
   --el-color-primary: #5D9C7B;
   --el-color-primary-light-3: #7DB89B;
@@ -42,8 +90,10 @@ a {
   --el-color-primary-light-8: #CDE6D8;
   --el-color-primary-light-9: #DDF4E8;
   --el-color-primary-dark-2: #4A7D62;
+
   --el-color-success: #5D9C7B;
   --el-color-warning: #F0A04B;
+
   --el-border-radius-base: 8px;
   --el-input-focus-border-color: #5D9C7B;
 }
@@ -69,11 +119,23 @@ a {
   background-color: var(--primary) !important;
 }
 
-/* 通用布局 */
+/* 按钮通用过渡 */
+.el-button {
+  transition: all var(--transition) !important;
+}
+
+/* ===== 通用布局类 ===== */
+
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .card-grid {
@@ -95,11 +157,16 @@ a {
   opacity: 0.5;
 }
 
-/* 响应式 */
+.empty-state p {
+  font-size: 15px;
+}
+
+/* ===== 响应式 ===== */
 @media (max-width: 768px) {
   .card-grid {
     grid-template-columns: 1fr;
   }
+
   .page-container {
     padding: 12px;
   }

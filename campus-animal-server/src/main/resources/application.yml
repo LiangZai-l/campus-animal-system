@@ -1,48 +1,66 @@
+# ===========================================
+# 校园流浪动物图鉴系统 — 应用核心配置
+# ===========================================
+
+# 服务端口
 server:
   port: 8080
 
 spring:
+  # === MVC 配置 ===
   mvc:
+    # 当请求的 URL 没有对应的 Handler 时抛出异常（而非默认的 404 页面）
+    # 配合 GlobalExceptionHandler 的 NoHandlerFoundException 处理，返回 JSON 格式的 404
     throw-exception-if-no-handler-found: true
+
   web:
     resources:
+      # 禁用静态资源的默认映射（因为我们通过 WebMvcConfig 手动配置了 /api/files/** 映射）
       add-mappings: false
 
+  # === 数据源配置 ===
   datasource:
     url: jdbc:mysql://localhost:3306/campus_animal?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
     password: meiyoumima
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 8.x JDBC 驱动
 
-  # 文件上传配置
+  # === 文件上传配置 ===
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 10MB      # 单个文件最大 10MB
+      max-request-size: 10MB   # 整个请求最大 10MB（包含文件和其他表单数据）
 
-# MyBatis-Plus 配置
+# === MyBatis-Plus 配置 ===
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: true  # 驼峰转换：real_name → realName
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印 SQL（学习用）
+    # 驼峰命名转换：数据库字段 real_name → Java 属性 realName
+    map-underscore-to-camel-case: true
+    # SQL 日志输出到控制台（开发阶段调试用，生产环境建议关闭）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-      id-type: auto  # 主键自增
+      # 主键生成策略：AUTO 表示使用数据库自增（依赖 AUTO_INCREMENT）
+      id-type: auto
 
-# 文件上传本地存储路径
+# === 文件上传本地存储路径 ===
+# 相对路径，实际解析为 {user.dir}/uploads（{user.dir} 是 JVM 进程的工作目录）
 file:
   upload-dir: ./uploads
 
-# JWT 配置
+# === JWT 配置 ===
 jwt:
+  # 签名密钥（Base64 编码），用于 HMAC-SHA256 签名
+  # 注意：生产环境应使用更强的随机密钥，并避免硬编码在配置文件中
   secret: Y2FtcHVzLWFuaW1hbC1zZWNyZXQta2V5LWZvci1qd3QtdG9rZW4tMjAyNA==
-  expiration: 86400000  # 24小时，单位毫秒
+  # 令牌过期时间（毫秒），86400000 = 24 小时
+  expiration: 86400000
 
-# Knife4j 文档
+# === Knife4j API 文档 ===
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
 knife4j:
   enable: true
   setting:
-    language: zh_cn
+    language: zh_cn  # 中文界面

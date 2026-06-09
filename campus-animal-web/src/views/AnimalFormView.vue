@@ -143,8 +143,8 @@ async function handleUpload({ file, onSuccess, onError }) {
   try {
     const formData = new FormData()
     formData.append('file', file)
-    const url = await api.post('/files/upload', formData)
-    form.coverImage = url
+    const res = await api.post('/files/upload', formData)
+    form.coverImage = res.data
     ElMessage.success('封面上传成功')
     onSuccess()
   } catch (err) {
