@@ -48,6 +48,12 @@ public interface CheckInService {
     void deleteMyCheckIn(Long checkInId);
 
     /**
+     * 管理员删除任意一条打卡记录（无需所有权校验）。
+     * @param checkInId 打卡记录 ID
+     */
+    void deleteByAdmin(Long checkInId);
+
+    /**
      * 查询当日打卡最多的动物及其位置路径。
      * @return 包含动物名、打卡次数、位置路径
      */

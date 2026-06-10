@@ -6,6 +6,7 @@ import com.campus.animal.service.CheckInService;
 import com.campus.animal.vo.CheckInVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -81,6 +82,22 @@ public class CheckInController {
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
         checkInService.deleteMyCheckIn(id);
+        return Result.success();
+    }
+
+    /**
+     * 管理员删除任意打卡记录。
+     * <p>
+     * DELETE /api/checkins/admin/{id}（需 ADMIN 角色）
+     * <p>
+     * 管理员可在动物详情页删除不当打卡内容，无需所有权校验。
+     *
+     * @param id 打卡记录 ID
+     */
+    @DeleteMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<Void> deleteByAdmin(@PathVariable Long id) {
+        checkInService.deleteByAdmin(id);
         return Result.success();
     }
 

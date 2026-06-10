@@ -127,6 +127,21 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     /**
+     * 管理员删除任意打卡记录。
+     * <p>
+     * 与 deleteMyCheckIn 的区别：不做所有权校验，
+     * 管理员有权删除任何用户的打卡记录。
+     */
+    @Override
+    public void deleteByAdmin(Long checkInId) {
+        CheckIn checkIn = checkInMapper.selectById(checkInId);
+        if (checkIn == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "打卡记录不存在");
+        }
+        checkInMapper.deleteById(checkInId);
+    }
+
+    /**
      * 查询当日打卡最多的动物及其位置路径。
      * <p>
      * 流程：

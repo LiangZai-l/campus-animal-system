@@ -36,6 +36,10 @@
           <span v-if="item.location" class="tl-location">
             <el-icon><LocationFilled /></el-icon> {{ item.location }}
           </span>
+          <el-button v-if="admin" text type="danger" size="small"
+            class="tl-delete" @click="handleDelete(item)">
+            <el-icon><Delete /></el-icon>
+          </el-button>
         </div>
       </div>
     </div>
@@ -43,10 +47,27 @@
 </template>
 
 <script setup>
-// 定义 props（接收打卡记录数组）
-defineProps({
-  items: { type: Array, default: () => [] }
+import { ElMessageBox } from 'element-plus'
+
+const props = defineProps({
+  items: { type: Array, default: () => [] },
+  admin: { type: Boolean, default: false }
 })
+
+const emit = defineEmits(['delete'])
+
+async function handleDelete(item) {
+  try {
+    await ElMessageBox.confirm(
+      `确定删除 ${item.username} 的打卡记录吗？`,
+      '删除确认',
+      { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+    )
+    emit('delete', item.id)
+  } catch {
+    // 用户取消
+  }
+}
 
 /**
  * 格式化 ISO 时间字符串为本地显示格式。
@@ -108,4 +129,5 @@ function moodLabel(m) {
 
 .tl-footer { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
 .tl-location { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 2px; }
+.tl-delete { margin-left: auto; }
 </style>

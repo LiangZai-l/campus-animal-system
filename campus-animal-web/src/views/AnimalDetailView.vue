@@ -61,7 +61,8 @@
             我来打卡
           </el-button>
         </div>
-        <CheckInTimeline :items="animal.timeline || []" />
+        <CheckInTimeline :items="animal.timeline || []" :admin="auth.isAdmin"
+          @delete="handleDeleteCheckIn" />
       </div>
     </template>
 
@@ -79,11 +80,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import api from '../api'
+import { useAuthStore } from '../stores/auth'
 import CheckInTimeline from '../components/CheckInTimeline.vue'
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 const animal = ref(null)
 const loading = ref(true)
 const fetchError = ref(false)
@@ -94,11 +98,24 @@ function formatDate(str) {
 }
 
 function goBack() {
-  router.push('/')
+  router.back()
 }
 
 function goCheckIn() {
   router.push(`/checkin/create?animalId=${route.params.id}`)
+}
+
+async function handleDeleteCheckIn(checkInId) {
+  try {
+    await api.delete(`/checkins/admin/${checkInId}`)
+    ElMessage.success('打卡记录已删除')
+    // 从本地数组中移除该记录
+    if (animal.value) {
+      animal.value.timeline = animal.value.timeline.filter(item => item.id !== checkInId)
+    }
+  } catch {
+    ElMessage.error('删除失败，请重试')
+  }
 }
 
 onMounted(async () => {
