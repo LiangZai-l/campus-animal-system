@@ -18,6 +18,7 @@ target/
 .DS_Store
 Thumbs.db
 Desktop.ini
+~$*
 
 # ==================== Node / Vue ====================
 node_modules/
